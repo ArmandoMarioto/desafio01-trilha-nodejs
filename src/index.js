@@ -13,7 +13,7 @@ function checksExistsUserAccount(request, response, next) {
 
   const user = users.find(user => user.username === username);
 
-  if(user){
+  if(!user){
     return response.status(400).json({error: "User not found"});
   }
 
@@ -38,22 +38,47 @@ app.post('/users', (request, response) => {
   if(userAlreadyExists){
     return response.status(400).json({error: "User already exists!"});
   }
-  users.push({
+  const newUser = {
     id: uuidv4(),
     name,
     username,
     todos: []
-  })
+  };
+  users.push(newUser)
 
-  return response.status(201).send();
+  return response.status(201).send(newUser);
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+  return response.json(user.todos);
+
 });
 
+// todos
+// { 
+// 	id: 'uuid', // precisa ser um uuid
+// 	title: 'Nome da tarefa',
+// 	done: false, 
+// 	deadline: '2021-02-27T00:00:00.000Z', 
+// 	created_at: '2021-02-22T00:00:00.000Z'
+// }
+
 app.post('/todos', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { title, deadline } = request.body;
+  const { user } = request
+
+  const todoOperation = {
+    id: uuidv4(),
+    title,
+    done:false,
+    deadline: new Date(deadline),
+    created_at: new Date()
+  }
+
+  user.todos.push(todoOperation);
+  
+  return response.status(201).send(todoOperation);
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
