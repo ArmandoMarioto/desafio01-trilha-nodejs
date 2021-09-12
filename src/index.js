@@ -63,7 +63,6 @@ app.get('/todos', checksExistsUserAccount, (request, response) => {
 // 	deadline: '2021-02-27T00:00:00.000Z', 
 // 	created_at: '2021-02-22T00:00:00.000Z'
 // }
-
 app.post('/todos', checksExistsUserAccount, (request, response) => {
   const { title, deadline } = request.body;
   const { user } = request
